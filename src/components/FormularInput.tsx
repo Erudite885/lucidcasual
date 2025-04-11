@@ -13,6 +13,7 @@ export const FormulaInput = () => {
   const [input, setInput] = useState("");
   const [filtered, setFiltered] = useState<Suggestion[]>([]);
   const [result, setResult] = useState<number | string | null>(null);
+  const [justSelected, setJustSelected] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -54,22 +55,30 @@ export const FormulaInput = () => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (input === "" && e.key === "Backspace") {
-      deleteLastToken();
-    }
+const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (input === "" && e.key === "Backspace") {
+    deleteLastToken();
+  }
 
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const res = evaluateFormula();
-      setResult(res);
+  if (e.key === "Enter") {
+    e.preventDefault();
+    if (input.trim() !== "") {
+      // If user is typing a raw value and presses enter, treat as token
+      addToken(input.trim());
+      setInput("");
     }
-  };
+    if (tokens.length > 0 || justSelected) {
+      setResult(evaluateFormula());
+    }
+    setJustSelected(false);
+  }
+};
 
   const insertSuggestion = (s: Suggestion) => {
     addToken({ tag: s });
     setInput("");
     setFiltered([]);
+    setJustSelected(true);
   };
 
   return (
