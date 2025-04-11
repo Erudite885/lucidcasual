@@ -54,9 +54,15 @@ export const FormulaInput = () => {
     }
   };
 
-  const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (input === "" && e.key === "Backspace") {
       deleteLastToken();
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const res = evaluateFormula();
+      setResult(res);
     }
   };
 
@@ -93,8 +99,8 @@ export const FormulaInput = () => {
             className="flex-1 text-xl outline-none"
             value={input}
             onChange={handleInputChange}
-            onKeyDown={handleBackspace}
-            placeholder="Type formula here..."
+            onKeyDown={handleKeyDown}
+            // placeholder="Type formula here..."
           />
         </div>
 
@@ -113,12 +119,14 @@ export const FormulaInput = () => {
           </div>
         )}
       </div>
-      <button
+
+      {/* Optional button can stay or be removed */}
+      {/* <button
         onClick={() => setResult(evaluateFormula())}
         className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
       >
         Evaluate Formula
-      </button>
+      </button> */}
 
       {result !== null && (
         <div className="mt-2 text-lg font-semibold">
