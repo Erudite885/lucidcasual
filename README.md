@@ -1,54 +1,53 @@
-# React + TypeScript + Vite
+# 🧮 Causal Formula Input Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project replicates the **formula input functionality** from [Causal](https://www.causal.app), as part of a Frontend Developer Test.
 
-Currently, two official plugins are available:
+Built with **React**, **Zustand**, **React Query**, and **Tailwind CSS**, it allows users to build expressions using variables, operators, and autocomplete tokens — mimicking a spreadsheet/code-editor hybrid input.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📺 Demo
 
-## Expanding the ESLint configuration
+Live preview: [lucidcasual.vercel.app](lucidcasual.vercel.app)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🔧 Features
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- ✅ **Tag & Operator Parsing**  
+  Supports natural numbers, mathematical operators, and tagged tokens.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- ✅ **Autocomplete Suggestions**  
+  Pulls from a mock API and suggests based on user input.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- ✅ **Interactive Tags with Dropdowns**  
+  Each inserted token (variable) has a dropdown for additional actions.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- ✅ **Keyboard Navigation**  
+  Use arrow keys to navigate suggestions and `Enter` to select.
+
+- ✅ **Backspace Deletion**  
+  Easily remove the last token when input is empty.
+
+- ✅ **Formula Evaluation (Bonus)**  
+  Dummy values are used to evaluate the formula and return a result.
+
+## 🧪 Tech Stack
+
+- ⚛️ React
+- 💅 Tailwind CSS
+- 🌐 React Query
+- 🧠 Zustand
+- 📦 MockAPI for autocomplete:  
+  `https://652f91320b8d8ddac0b2b62b.mockapi.io/autocomplete`
+
+## 📹 Reference Video
+
+This feature replicates the formula input UI/UX from Causal.  
+Watch the reference video here: [Video Walkthrough ](https://www.awesomescreenshot.com/video/38658633?key=613b71ec01c462fbc8e09aae6f2273a4)
+
+## 🏁 Getting Started
+
+Clone and run locally:
+
+```bash
+git clone insert-repo-name
+cd repo-name
+npm install
+npm run dev
