@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { useFormulaStore } from "../store/formularStore";
 import { useSuggestions } from "../api/useSuggestions";
@@ -15,46 +15,16 @@ export const FormulaInput = () => {
   const [result, setResult] = useState<number | string | null>(null);
   const [justSelected, setJustSelected] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const suggestionRefs = useRef<HTMLDivElement[]>([]);
 
-  //   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     const val = e.target.value;
-  //     const lastChar = val.slice(-1);
-
-  //     // If user types an operator
-  //     if (OPERATORS.includes(lastChar)) {
-  //       if (val.length > 1) {
-  //         const beforeOp = val.slice(0, -1).trim();
-  //         if (beforeOp) addToken(beforeOp);
-  //       }
-  //       addToken(lastChar);
-  //       setInput("");
-  //       setFiltered([]);
-  //       return;
-  //     }
-
-  //     // If user types a space after a suggestion
-  //     if (val.endsWith(" ")) {
-  //       const match = suggestions.find(
-  //         (s) => s.name.toLowerCase() === val.trim().toLowerCase()
-  //       );
-  //       if (match) {
-  //         addToken({ tag: match });
-  //         setInput("");
-  //         setFiltered([]);
-  //         return;
-  //       }
-  //     }
-
-  //     setInput(val);
-  //     if (val.length > 0) {
-  //       const lowercase = val.toLowerCase();
-  //       setFiltered(
-  //         suggestions.filter((s) => s.name.toLowerCase().includes(lowercase))
-  //       );
-  //     } else {
-  //       setFiltered([]);
-  //     }
-  //   };
+  useEffect(() => {
+    if (highlightedIndex >= 0 && suggestionRefs.current[highlightedIndex]) {
+      suggestionRefs.current[highlightedIndex].scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [highlightedIndex]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -96,25 +66,6 @@ export const FormulaInput = () => {
       setFiltered([]);
     }
   };
-
-  //   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //     if (input === "" && e.key === "Backspace") {
-  //       deleteLastToken();
-  //     }
-
-  //     if (e.key === "Enter") {
-  //       e.preventDefault();
-  //       if (input.trim() !== "") {
-  //         // If user is typing a raw value and presses enter, treat as token
-  //         addToken(input.trim());
-  //         setInput("");
-  //       }
-  //       if (tokens.length > 0 || justSelected) {
-  //         setResult(evaluateFormula());
-  //       }
-  //       setJustSelected(false);
-  //     }
-  //   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (input === "" && e.key === "Backspace") {
@@ -195,6 +146,9 @@ export const FormulaInput = () => {
             {filtered.map((s, idx) => (
               <div
                 key={s.id}
+                ref={(el) => {
+                  if (el) suggestionRefs.current[idx] = el;
+                }}
                 onClick={() => insertSuggestion(s)}
                 className={`px-4 py-2 cursor-pointer ${
                   idx === highlightedIndex ? "bg-blue-100" : "hover:bg-blue-50"
