@@ -14,12 +14,56 @@ export const FormulaInput = () => {
   const [filtered, setFiltered] = useState<Suggestion[]>([]);
   const [result, setResult] = useState<number | string | null>(null);
   const [justSelected, setJustSelected] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+
+  //   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     const val = e.target.value;
+  //     const lastChar = val.slice(-1);
+
+  //     // If user types an operator
+  //     if (OPERATORS.includes(lastChar)) {
+  //       if (val.length > 1) {
+  //         const beforeOp = val.slice(0, -1).trim();
+  //         if (beforeOp) addToken(beforeOp);
+  //       }
+  //       addToken(lastChar);
+  //       setInput("");
+  //       setFiltered([]);
+  //       return;
+  //     }
+
+  //     // If user types a space after a suggestion
+  //     if (val.endsWith(" ")) {
+  //       const match = suggestions.find(
+  //         (s) => s.name.toLowerCase() === val.trim().toLowerCase()
+  //       );
+  //       if (match) {
+  //         addToken({ tag: match });
+  //         setInput("");
+  //         setFiltered([]);
+  //         return;
+  //       }
+  //     }
+
+  //     setInput(val);
+  //     if (val.length > 0) {
+  //       const lowercase = val.toLowerCase();
+  //       setFiltered(
+  //         suggestions.filter((s) => s.name.toLowerCase().includes(lowercase))
+  //       );
+  //     } else {
+  //       setFiltered([]);
+  //     }
+  //   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
+    setInput(val);
+    setResult(null); // Clear previous result when typing starts
+    setJustSelected(false);
+
     const lastChar = val.slice(-1);
 
-    // If user types an operator
     if (OPERATORS.includes(lastChar)) {
       if (val.length > 1) {
         const beforeOp = val.slice(0, -1).trim();
@@ -31,48 +75,81 @@ export const FormulaInput = () => {
       return;
     }
 
-    // If user types a space after a suggestion
     if (val.endsWith(" ")) {
       const match = suggestions.find(
         (s) => s.name.toLowerCase() === val.trim().toLowerCase()
       );
       if (match) {
-        addToken({ tag: match });
-        setInput("");
-        setFiltered([]);
+        insertSuggestion(match);
         return;
       }
     }
 
-    setInput(val);
     if (val.length > 0) {
       const lowercase = val.toLowerCase();
-      setFiltered(
-        suggestions.filter((s) => s.name.toLowerCase().includes(lowercase))
+      const matches = suggestions.filter((s) =>
+        s.name.toLowerCase().includes(lowercase)
       );
+      setFiltered(matches);
+      setHighlightedIndex(0); // reset highlight on new input
     } else {
       setFiltered([]);
     }
   };
 
-const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  if (input === "" && e.key === "Backspace") {
-    deleteLastToken();
-  }
+  //   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //     if (input === "" && e.key === "Backspace") {
+  //       deleteLastToken();
+  //     }
 
-  if (e.key === "Enter") {
-    e.preventDefault();
-    if (input.trim() !== "") {
-      // If user is typing a raw value and presses enter, treat as token
-      addToken(input.trim());
-      setInput("");
+  //     if (e.key === "Enter") {
+  //       e.preventDefault();
+  //       if (input.trim() !== "") {
+  //         // If user is typing a raw value and presses enter, treat as token
+  //         addToken(input.trim());
+  //         setInput("");
+  //       }
+  //       if (tokens.length > 0 || justSelected) {
+  //         setResult(evaluateFormula());
+  //       }
+  //       setJustSelected(false);
+  //     }
+  //   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (input === "" && e.key === "Backspace") {
+      deleteLastToken();
     }
-    if (tokens.length > 0 || justSelected) {
-      setResult(evaluateFormula());
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => Math.min(prev + 1, filtered.length - 1));
     }
-    setJustSelected(false);
-  }
-};
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (filtered.length > 0 && input !== "") {
+        insertSuggestion(filtered[highlightedIndex]);
+        return;
+      }
+
+      if (input.trim() !== "") {
+        addToken(input.trim());
+        setInput("");
+      }
+
+      if (tokens.length > 0 || justSelected) {
+        setResult(evaluateFormula());
+      }
+
+      setJustSelected(false);
+    }
+  };
 
   const insertSuggestion = (s: Suggestion) => {
     addToken({ tag: s });
@@ -115,11 +192,13 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
         {filtered.length > 0 && (
           <div className="border mt-1 rounded bg-white shadow-md max-h-48 overflow-auto">
-            {filtered.map((s) => (
+            {filtered.map((s, idx) => (
               <div
                 key={s.id}
                 onClick={() => insertSuggestion(s)}
-                className="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                className={`px-4 py-2 cursor-pointer ${
+                  idx === highlightedIndex ? "bg-blue-100" : "hover:bg-blue-50"
+                }`}
               >
                 {s.name}{" "}
                 <span className="text-xs text-gray-500">({s.category})</span>
