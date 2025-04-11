@@ -40,6 +40,12 @@ Live preview: [lucidcasual.vercel.app](lucidcasual.vercel.app)
 ## 📹 Reference Video
 
 This feature replicates the formula input UI/UX from Causal.  
+
+
+You can [watch the demo video here](./public/causal-demo.mp4) to see how the formula input replicates Causal's interface.
+
+OR
+
 Watch the reference video here: [Video Walkthrough ](https://www.awesomescreenshot.com/video/38658633?key=613b71ec01c462fbc8e09aae6f2273a4)
 
 ## 🏁 Getting Started
@@ -47,7 +53,7 @@ Watch the reference video here: [Video Walkthrough ](https://www.awesomescreensh
 Clone and run locally:
 
 ```bash
-git clone insert-repo-name
-cd repo-name
+git clone lucidcasual
+cd lucidcasual
 npm install
 npm run dev
