@@ -1,12 +1,17 @@
 
-// import "./App.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { FormulaInput } from "./components/FormularInput";
+
+const queryClient = new QueryClient();
 
 function App() {
- 
   return (
-    <div>
-      <h1 className="text-4xl text-red-500">Casual Test</h1>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <main className="p-10 bg-gray-100 min-h-screen">
+        <h1 className="text-2xl font-bold mb-6">Causal-style Formula Input</h1>
+        <FormulaInput />
+      </main>
+    </QueryClientProvider>
   );
 }
 
