@@ -7,10 +7,12 @@ import { Suggestion } from "../types";
 const OPERATORS = ["+", "-", "*", "/", "^", "(", ")"];
 
 export const FormulaInput = () => {
+  const { evaluateFormula } = useFormulaStore();
   const { tokens, addToken, deleteLastToken } = useFormulaStore();
   const { data: suggestions = [] } = useSuggestions();
   const [input, setInput] = useState("");
   const [filtered, setFiltered] = useState<Suggestion[]>([]);
+  const [result, setResult] = useState<number | string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -65,50 +67,64 @@ export const FormulaInput = () => {
   };
 
   return (
-    <div className="border p-4 rounded-lg w-full max-w-3xl bg-white shadow-md space-y-2">
-      <div className="flex flex-wrap items-center gap-2 min-h-[50px]">
-        {tokens.map((token, idx) =>
-          typeof token === "string" ? (
-            <span key={idx} className="text-xl">
-              {token}
-            </span>
-          ) : (
-            <div
-              key={idx}
-              className="flex items-center bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
-            >
-              {token.tag.name}
-              {/* Attached Dropdown */}
-              <select className="ml-2 bg-blue-200 text-sm rounded">
-                <option>{token.tag.category}</option>
-                <option>Details</option>
-              </select>
-            </div>
-          )
-        )}
-        <input
-          className="flex-1 text-xl outline-none"
-          value={input}
-          onChange={handleInputChange}
-          onKeyDown={handleBackspace}
-          placeholder="Type formula here..."
-        />
-      </div>
+    <>
+      <div className="border p-4 rounded-lg w-full max-w-3xl bg-white shadow-md space-y-2">
+        <div className="flex flex-wrap items-center gap-2 min-h-[50px]">
+          {tokens.map((token, idx) =>
+            typeof token === "string" ? (
+              <span key={idx} className="text-xl">
+                {token}
+              </span>
+            ) : (
+              <div
+                key={idx}
+                className="flex items-center bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+              >
+                {token.tag.name}
+                {/* Attached Dropdown */}
+                <select className="ml-2 bg-blue-200 text-sm rounded">
+                  <option>{token.tag.category}</option>
+                  <option>Details</option>
+                </select>
+              </div>
+            )
+          )}
+          <input
+            className="flex-1 text-xl outline-none"
+            value={input}
+            onChange={handleInputChange}
+            onKeyDown={handleBackspace}
+            placeholder="Type formula here..."
+          />
+        </div>
 
-      {filtered.length > 0 && (
-        <div className="border mt-1 rounded bg-white shadow-md max-h-48 overflow-auto">
-          {filtered.map((s) => (
-            <div
-              key={s.id}
-              onClick={() => insertSuggestion(s)}
-              className="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-            >
-              {s.name}{" "}
-              <span className="text-xs text-gray-500">({s.category})</span>
-            </div>
-          ))}
+        {filtered.length > 0 && (
+          <div className="border mt-1 rounded bg-white shadow-md max-h-48 overflow-auto">
+            {filtered.map((s) => (
+              <div
+                key={s.id}
+                onClick={() => insertSuggestion(s)}
+                className="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+              >
+                {s.name}{" "}
+                <span className="text-xs text-gray-500">({s.category})</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <button
+        onClick={() => setResult(evaluateFormula())}
+        className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        Evaluate Formula
+      </button>
+
+      {result !== null && (
+        <div className="mt-2 text-lg font-semibold">
+          Result: <span className="text-green-700">{result}</span>
         </div>
       )}
-    </div>
+    </>
   );
 };
